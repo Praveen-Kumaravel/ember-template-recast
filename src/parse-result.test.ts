@@ -149,7 +149,7 @@ describe('ember-template-recast', function () {
     });
 
     test('rename self-closing element tagname', function () {
-      let ast = parse('<Foo bar="baz"/>') as any;
+      let ast = parse('<Foo bar="baz"/>', sampleFilename) as any;
 
       ast.body[0].tag = 'Qux';
 
@@ -157,7 +157,7 @@ describe('ember-template-recast', function () {
     });
 
     test('rename self-closing element tagname with trailing whitespace', function () {
-      let ast = parse('<Foo />') as any;
+      let ast = parse('<Foo />', sampleFilename) as any;
 
       ast.body[0].tag = 'Qux';
 
@@ -165,7 +165,7 @@ describe('ember-template-recast', function () {
     });
 
     test('Rename tag and convert from self-closing with attributes to block element', function () {
-      let ast = parse('<Foo bar="baz" />') as any;
+      let ast = parse('<Foo bar="baz" />', sampleFilename) as any;
 
       ast.body[0].tag = 'Qux';
       ast.body[0].children = [builders.text('bay')];
@@ -174,7 +174,7 @@ describe('ember-template-recast', function () {
     });
 
     test('convert from self-closing with attributes to block element', function () {
-      let ast = parse('<Foo bar="baz" />') as any;
+      let ast = parse('<Foo bar="baz" />', sampleFilename) as any;
 
       ast.body[0].children = [builders.text('bay')];
 
@@ -182,7 +182,7 @@ describe('ember-template-recast', function () {
     });
 
     test('convert from self-closing with specially spaced attributes to block element', function () {
-      let ast = parse('<Foo\n  bar="baz"\n />') as any;
+      let ast = parse('<Foo\n  bar="baz"\n />', sampleFilename) as any;
 
       ast.body[0].children = [builders.text('bay')];
 
@@ -190,7 +190,7 @@ describe('ember-template-recast', function () {
     });
 
     test('Convert self-closing element with modifiers block element', function () {
-      let ast = parse('<Foo {{on "click" this.doSomething}} />') as any;
+      let ast = parse('<Foo {{on "click" this.doSomething}} />', sampleFilename) as any;
 
       ast.body[0].children = [builders.text('bay')];
 
@@ -779,7 +779,7 @@ describe('ember-template-recast', function () {
     });
 
     test('creating new MustacheStatement with single param has correct whitespace', function () {
-      let ast = parse('');
+      let ast = parse('', sampleFilename);
 
       ast.body.push(builders.mustache('foo', [builders.string('hi')]));
 
@@ -787,7 +787,7 @@ describe('ember-template-recast', function () {
     });
 
     test('copying params and hash from a sub expression into a new MustacheStatement has correct whitespace', function () {
-      let ast = parse('{{some-helper (foo "hi")}}');
+      let ast = parse('{{some-helper (foo "hi")}}', sampleFilename);
 
       let mustache = ast.body[0] as AST.MustacheStatement;
       let sexpr = mustache.params[0] as AST.SubExpression;
@@ -1266,27 +1266,27 @@ describe('ember-template-recast', function () {
     });
 
     test('can determine if an AttrNode was valueless (required by ember-template-lint)', function () {
-      expect((parse(`<Foo bar={{foo}} />`) as any).body[0].attributes[0].isValueless).toBe(false);
-      expect((parse(`<Foo bar="foo {{bar}}" />`) as any).body[0].attributes[0].isValueless).toBe(
+      expect((parse(`<Foo bar={{foo}} />`, sampleFilename) as any).body[0].attributes[0].isValueless).toBe(false);
+      expect((parse(`<Foo bar="foo {{bar}}" />`, sampleFilename) as any).body[0].attributes[0].isValueless).toBe(
         false
       );
-      expect((parse(`<Foo bar='foo {{bar}}' />`) as any).body[0].attributes[0].isValueless).toBe(
+      expect((parse(`<Foo bar='foo {{bar}}' />`, sampleFilename) as any).body[0].attributes[0].isValueless).toBe(
         false
       );
-      expect((parse(`<Foo bar="foo" />`) as any).body[0].attributes[0].isValueless).toBe(false);
-      expect((parse(`<Foo bar='foo' />`) as any).body[0].attributes[0].isValueless).toBe(false);
-      expect((parse(`<Foo bar=foo />`) as any).body[0].attributes[0].isValueless).toBe(false);
-      expect((parse(`<Foo bar />`) as any).body[0].attributes[0].isValueless).toBe(true);
+      expect((parse(`<Foo bar="foo" />`, sampleFilename) as any).body[0].attributes[0].isValueless).toBe(false);
+      expect((parse(`<Foo bar='foo' />`, sampleFilename) as any).body[0].attributes[0].isValueless).toBe(false);
+      expect((parse(`<Foo bar=foo />`, sampleFilename) as any).body[0].attributes[0].isValueless).toBe(false);
+      expect((parse(`<Foo bar />`, sampleFilename) as any).body[0].attributes[0].isValueless).toBe(true);
     });
 
     test('can determine type of quotes used from AST (required by ember-template-lint)', function () {
-      expect((parse(`<Foo bar={{foo}} />`) as any).body[0].attributes[0].quoteType).toBe(null);
-      expect((parse(`<Foo bar="foo {{bar}}" />`) as any).body[0].attributes[0].quoteType).toBe(`"`);
-      expect((parse(`<Foo bar='foo {{bar}}' />`) as any).body[0].attributes[0].quoteType).toBe(`'`);
-      expect((parse(`<Foo bar="foo" />`) as any).body[0].attributes[0].quoteType).toBe(`"`);
-      expect((parse(`<Foo bar='foo' />`) as any).body[0].attributes[0].quoteType).toBe(`'`);
-      expect((parse(`<Foo bar=foo />`) as any).body[0].attributes[0].quoteType).toBe(null);
-      expect((parse(`<Foo bar />`) as any).body[0].attributes[0].quoteType).toBe(null);
+      expect((parse(`<Foo bar={{foo}} />`, sampleFilename) as any).body[0].attributes[0].quoteType).toBe(null);
+      expect((parse(`<Foo bar="foo {{bar}}" />`, sampleFilename) as any).body[0].attributes[0].quoteType).toBe(`"`);
+      expect((parse(`<Foo bar='foo {{bar}}' />`, sampleFilename) as any).body[0].attributes[0].quoteType).toBe(`'`);
+      expect((parse(`<Foo bar="foo" />`, sampleFilename) as any).body[0].attributes[0].quoteType).toBe(`"`);
+      expect((parse(`<Foo bar='foo' />`, sampleFilename) as any).body[0].attributes[0].quoteType).toBe(`'`);
+      expect((parse(`<Foo bar=foo />`, sampleFilename) as any).body[0].attributes[0].quoteType).toBe(null);
+      expect((parse(`<Foo bar />`, sampleFilename) as any).body[0].attributes[0].quoteType).toBe(null);
     });
 
     test('renaming valueless attribute', function () {
@@ -1656,22 +1656,22 @@ describe('ember-template-recast', function () {
     });
 
     test('can determine type of quotes used from AST (required by ember-template-lint)', function () {
-      expect((parse(`{{foo "blah"}}`) as any).body[0].params[0].quoteType).toBe('"');
-      expect((parse(`{{foo 'blah'}}`) as any).body[0].params[0].quoteType).toBe("'");
+      expect((parse(`{{foo "blah"}}`, sampleFilename) as any).body[0].params[0].quoteType).toBe('"');
+      expect((parse(`{{foo 'blah'}}`, sampleFilename) as any).body[0].params[0].quoteType).toBe("'");
     });
 
     test('can update quote style', function () {
-      let ast = parse(`{{foo "blah"}}`) as any;
+      let ast = parse(`{{foo "blah"}}`, sampleFilename) as any;
       ast.body[0].params[0].quoteType = "'";
       expect(print(ast)).toEqual(`{{foo 'blah'}}`);
 
-      ast = parse(`{{foo 'blah'}}`) as any;
+      ast = parse(`{{foo 'blah'}}`, sampleFilename) as any;
       ast.body[0].params[0].quoteType = '"';
       expect(print(ast)).toEqual(`{{foo "blah"}}`);
     });
 
     test('can specify quote style on a new string literal', function () {
-      let ast = parse(`{{foo}}`) as any;
+      let ast = parse(`{{foo}}`, sampleFilename) as any;
       let s = builders.string('blah');
       s.quoteType = "'";
       ast.body[0].params.push(s);
