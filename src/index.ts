@@ -5,8 +5,8 @@ import { builders } from './custom-nodes';
 
 const NODE_INFO = new WeakMap<AST.Node, NodeInfo>();
 
-export function parse(template: string): AST.Template {
-  return new ParseResult(template, NODE_INFO).ast;
+export function parse(template: string, sourceFilename): AST.Template {
+  return new ParseResult(template, NODE_INFO, sourceFilename).ast;
 }
 
 export function print(ast: AST.Node): string {
