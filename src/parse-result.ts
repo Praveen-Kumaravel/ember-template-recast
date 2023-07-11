@@ -134,7 +134,7 @@ export default class ParseResult {
   private dirtyFields = new Map<AST.Node, Set<string>>();
   public ast: AST.Template;
 
-  constructor(template: string, nodeInfo: WeakMap<AST.Node, NodeInfo> = new WeakMap(), sourceFilename) {
+  constructor(template: string, nodeInfo: WeakMap<AST.Node, NodeInfo> = new WeakMap(), sourceFilename: string) {
     let ast = preprocess(template, {
       mode: 'codemod',
       meta: {
