@@ -864,7 +864,7 @@ describe('"real life" smoke tests', function () {
             closingSource,
           ].join('');
 
-          let fakeElement = parse(replacementElementSource).body[0];
+          let fakeElement = parse(replacementElementSource, '').body[0];
           seen.add(fakeElement);
 
           return fakeElement;
@@ -939,7 +939,7 @@ describe('"real life" smoke tests', function () {
           exit(node) {
             let replacement = `ZOMG other things here`;
 
-            node.body = env.syntax.parse(replacement).body;
+            node.body = env.syntax.parse(replacement, '').body;
           },
         },
       };
@@ -962,7 +962,7 @@ some-other-thing={{haha}}></div>`;
       return {
         Program: {
           exit(node) {
-            let ast = env.syntax.parse(replacement);
+            let ast = env.syntax.parse(replacement, '');
             node.body = ast.body;
           },
         },
