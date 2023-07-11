@@ -2,20 +2,22 @@ import { builders, parse, print, transform } from './index';
 import type { ASTv1 as AST } from '@glimmer/syntax';
 import stripIndent from 'outdent';
 
+const filename = './dummy/template.hbs';
+
 describe('ember-template-recast', function () {
   test('basic parse + print (no modification)', function () {
     let template = stripIndent`
       {{foo-bar
         baz="stuff"
       }}`;
-    let ast = parse(template);
+    let ast = parse(template, filename);
 
     expect(print(ast)).toEqual(template);
   });
 
   test('basic parse + print (no modification): void elements', function () {
     let template = `<br><p>Hi!</p>`;
-    let ast = parse(template);
+    let ast = parse(template, filename);
 
     expect(print(ast)).toEqual(template);
   });
@@ -28,7 +30,7 @@ describe('ember-template-recast', function () {
 
 
 `;
-    let ast = parse(template);
+    let ast = parse(template, filename);
 
     expect(print(ast)).toEqual(template);
   });
@@ -39,7 +41,7 @@ describe('ember-template-recast', function () {
         baz="stuff"
         other='single quote'
       }}`;
-    let ast = parse(template);
+    let ast = parse(template, filename);
     let mustache = ast.body[0] as AST.MustacheStatement;
     mustache.hash.pairs[0].key = 'derp';
 
@@ -55,7 +57,7 @@ describe('ember-template-recast', function () {
       <div class="foo" ...attributes></div>
       <div ...attributes class="foo"></div>
     `;
-    let ast = parse(template);
+    let ast = parse(template, filename);
     let b = builders;
     let { body } = ast;
 
@@ -79,7 +81,7 @@ describe('ember-template-recast', function () {
 
   test('basic parse -> mutation -> print: preserves HTML entities', function () {
     let template = stripIndent`<div>&nbsp;</div>`;
-    let ast = parse(template);
+    let ast = parse(template, filename);
     let element = ast.body[0] as AST.ElementNode;
     element.children.push(builders.text('derp&nbsp;'));
 
@@ -167,7 +169,7 @@ describe('ember-template-recast', function () {
       test('can accept an AST', function () {
         let template = '{{foo-bar bar=foo}}';
         let paths: string[] = [];
-        let ast = parse(template);
+        let ast = parse(template, filename);
         transform(ast, function () {
           return {
             PathExpression(node) {
@@ -324,7 +326,7 @@ describe('ember-template-recast', function () {
     test('can accept an AST', function () {
       let template = '{{foo-bar bar=foo}}';
       let paths: string[] = [];
-      let ast = parse(template);
+      let ast = parse(template, filename);
       transform({
         template: ast,
         plugin() {
